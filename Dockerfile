@@ -1,6 +1,11 @@
 FROM ruby:3.2-slim
 RUN apt update && apt install -y gcc make
 
+# https://fly.io/docs/rails/cookbooks/node/
+RUN curl -sL https://deb.nodesource.com/setup_current.x | bash - &&\
+    apt-get update && \
+    apt-get install --yes --no-install-recommends nodejs npm
+ENV PATH=/app/node_modules/.bin:$PATH
 # # syntax = docker/dockerfile:1
 
 # # Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
