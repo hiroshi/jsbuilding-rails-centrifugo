@@ -3,4 +3,3 @@
 // import "controllers"
 
 import './react';
-console.log('hello');

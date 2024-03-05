@@ -1,4 +1,43 @@
 import {  createRoot } from 'react-dom/client';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
+import { Centrifuge } from 'centrifuge';
+
+function App() {
+  const [counter, setCounter] = useState(0);
+
+  useEffect(() => {
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM3MjIiLCJleHAiOjE3MTAwMzEyNDEsImlhdCI6MTcwOTQyNjQ0MX0.955MUnrCT4mWUIGn-fZpm8Ku0Dz29DxCUzF1LYSB78Y';
+    // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTAwMzE3OTUsImlhdCI6MTcwOTQyNjk5NX0.0akB3KFuzYGvkSygIihbCevxcMNeKi7RrPOHVTHU6fI';
+    const centrifuge = new Centrifuge("ws://localhost:8000/connection/websocket", {token});
+    centrifuge.on('connecting', function (ctx) {
+      console.log('connecting:', { ctx });
+    }).on('connected', function (ctx) {
+      console.log('connected:', { ctx });
+    }).on('disconnected', function (ctx) {
+      console.log('disconnected:', { ctx });
+    }).connect();
+
+    const sub = centrifuge.newSubscription("channel");
+
+    sub.on('publication', function (ctx) {
+      console.log('publication:', { ctx });
+      setCounter(ctx.data.value);
+    }).on('subscribing', function (ctx) {
+      console.log('subscribing:', { ctx });
+    }).on('subscribed', function (ctx) {
+      console.log('subscribed:', { ctx });
+    }).on('unsubscribed', function (ctx) {
+      console.log('unsubscribed:', { ctx });
+    }).subscribe();
+  }, []);
+
+  return (
+    <>
+      <p>Hello React.FC</p>
+      <p>counter: {counter}</p>
+    </>
+  );
+}
+
 const root = createRoot(document.getElementById('react-root'));
-root.render(<h1>Hello, react</h1>);
+root.render(<App />);
