@@ -1,9 +1,10 @@
-import {  createRoot } from 'react-dom/client';
-import React, {useEffect, useState} from 'react';
+import { createRoot } from 'react-dom/client';
+import React, {useEffect, useState, useRef} from 'react';
 import { Centrifuge } from 'centrifuge';
 
 function App() {
   const [counter, setCounter] = useState(0);
+  const [sub, setSub] = useState(0);
 
   useEffect(() => {
     const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM3MjIiLCJleHAiOjE3MTAwMzEyNDEsImlhdCI6MTcwOTQyNjQ0MX0.955MUnrCT4mWUIGn-fZpm8Ku0Dz29DxCUzF1LYSB78Y';
@@ -29,12 +30,36 @@ function App() {
     }).on('unsubscribed', function (ctx) {
       console.log('unsubscribed:', { ctx });
     }).subscribe();
+    setSub(sub);
   }, []);
 
+  const inputRef = useRef(null);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const message = inputRef.current.value;
+    // console.log({ message });
+    // sub.publish({ message });
+    fetch(
+      '/topics', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name=csrf-token]').getAttribute('content'),
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ topic: { message }})
+      })
+      .then(res => {
+        console.log({ res });
+      });
+  };
+
+  console.log('before return');
   return (
     <>
-      <p>Hello React.FC</p>
       <p>counter: {counter}</p>
+      <form onSubmit={handleSubmit}>
+        <input ref={inputRef} type='text' />
+      </form>
     </>
   );
 }

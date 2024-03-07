@@ -1,19 +1,24 @@
+# https://docs.docker.com/compose/compose-file/compose-file-v3/#extension-fields
+x-app: &app
+  build: ./
+  working_dir: /app
+  volumes:
+    - ./:/app
+    - bundle:/usr/local/bundle
+    - node_modules:/app/node_modules
+
 services:
   app:
-    build: ./
-    working_dir: /app
+    << : *app
     command: ['bundle', 'exec', 'rails', 'server', '-p', '3003', '-b', '0.0.0.0']
     environment:
       RUBY_DEBUG_OPEN: 'true'
     ports:
       - 127.0.0.1:3003:3003
-    volumes:
-      - ./:/app
-      - bundle:/usr/local/bundle
-      - node_modules:/app/node_modules
-  # js:
-  #   command: ['npm', 'build', ''
-  # centrifugo docker run --rm --ulimit nofile=262144:262144 -v $PWD:/centrifugo -p 8000:8000 centrifugo/centrifugo:v5 centrifugo -c config.json --admin
+  js:
+    << : *app
+    build: ./
+    command: ['esbuild', 'app/javascript/application.js', '--bundle', '--outdir=app/assets/builds', '--watch=forever']
   centrifugo:
     image: centrifugo/centrifugo:v5
     command: ['centrifugo', '--admin', '-c', 'config.json']
