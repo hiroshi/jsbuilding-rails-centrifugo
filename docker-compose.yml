@@ -26,9 +26,15 @@ services:
       - 8000:8000
     volumes:
       - ./centrifugo:/centrifugo
+  mongo:
+    image: mongo:7.0
+    volumes:
+      - mongo:/data
 
 volumes:
   bundle:
     driver: local
   node_modules:
+    driver: local
+  mongo:
     driver: local

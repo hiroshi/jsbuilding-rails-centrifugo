@@ -1,6 +1,16 @@
 require_relative "boot"
 
-require "rails/all"
+# require "rails/all"
+# require 'active_record/railtie'
+# require 'active_storage/engine'
+require 'action_controller/railtie'
+require 'action_view/railtie'
+require 'action_mailer/railtie'
+require 'active_job/railtie'
+# require 'action_cable/engine'
+# require 'action_mailbox/engine'
+# require 'action_text/engine'
+# require 'rails/test_unit/railtie'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -23,5 +33,10 @@ module App
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # https://www.mongodb.com/docs/mongoid/current/reference/configuration/#loading-mongoid-configuration
+    config.generators do |g|
+      g.orm :mongoid
+    end
   end
 end
