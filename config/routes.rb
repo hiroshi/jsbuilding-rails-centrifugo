@@ -8,7 +8,7 @@ Rails.application.routes.draw do
     # Defines the root path route ("/")
     root 'application#index'
 
-    resources :topics, only: [:create]
+    resources :topics, only: [:create, :index]
 
     namespace :centrifugo do
       resource :token, only: [:show]

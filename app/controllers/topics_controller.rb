@@ -4,4 +4,8 @@ class TopicsController < ApplicationController
     Centrifugo.publish(channel: 'topics', data: topic.as_json(root: true))
     head :created
   end
+
+  def index
+    render json: Topic.limit(params[:limit].presence || 5).order(_id: :desc).as_json
+  end
 end

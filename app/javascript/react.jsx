@@ -32,6 +32,7 @@ function NewTopic() {
 }
 
 function Topics() {
+  const limit = 5;
   const [topics, setTopics] = useState([]);
   const centrifuge = useContext(CentrifugeContext);
 
@@ -41,7 +42,7 @@ function Topics() {
     // console.log({sub});
     sub.on('publication', function (ctx) {
       // console.log('publication:', { ctx });
-      setTopics(a => [ctx.data.topic, ...a]);
+      setTopics(a => [ctx.data.topic, ...a.slice(0, limit -1)]);
     }).on('subscribing', function (ctx) {
       console.log('subscribing:', { ctx });
     }).on('subscribed', function (ctx) {
@@ -50,6 +51,14 @@ function Topics() {
       console.log('unsubscribed:', { ctx });
     }).subscribe();
   }, [centrifuge]);
+
+  useEffect(() => {
+    fetch(`/topics?limit=${limit}`)
+      .then(res => res.json())
+      .then((topics) => {
+        setTopics(topics);
+      });
+  }, []);
 
   return (
     <>
