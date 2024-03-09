@@ -5,6 +5,8 @@ ruby "3.2.3"
 gem "rails", "~> 7.1.3", ">= 7.1.3.2"
 gem "jsbundling-rails", "~> 1.3"
 gem "mongoid"
+gem "rest-client", "~> 2.1"
+gem "jwt"
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"

@@ -1,44 +1,15 @@
 import { createRoot } from 'react-dom/client';
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useContext, createContext} from 'react';
 import { Centrifuge } from 'centrifuge';
 
-function App() {
-  const [counter, setCounter] = useState(0);
-  const [sub, setSub] = useState(0);
+const CentrifugeContext = createContext(null);
 
-  useEffect(() => {
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM3MjIiLCJleHAiOjE3MTAwMzEyNDEsImlhdCI6MTcwOTQyNjQ0MX0.955MUnrCT4mWUIGn-fZpm8Ku0Dz29DxCUzF1LYSB78Y';
-    // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTAwMzE3OTUsImlhdCI6MTcwOTQyNjk5NX0.0akB3KFuzYGvkSygIihbCevxcMNeKi7RrPOHVTHU6fI';
-    const centrifuge = new Centrifuge("ws://localhost:8000/connection/websocket", {token});
-    centrifuge.on('connecting', function (ctx) {
-      console.log('connecting:', { ctx });
-    }).on('connected', function (ctx) {
-      console.log('connected:', { ctx });
-    }).on('disconnected', function (ctx) {
-      console.log('disconnected:', { ctx });
-    }).connect();
-
-    const sub = centrifuge.newSubscription("channel");
-
-    sub.on('publication', function (ctx) {
-      console.log('publication:', { ctx });
-      setCounter(ctx.data.value);
-    }).on('subscribing', function (ctx) {
-      console.log('subscribing:', { ctx });
-    }).on('subscribed', function (ctx) {
-      console.log('subscribed:', { ctx });
-    }).on('unsubscribed', function (ctx) {
-      console.log('unsubscribed:', { ctx });
-    }).subscribe();
-    setSub(sub);
-  }, []);
-
+function NewTopic() {
   const inputRef = useRef(null);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const message = inputRef.current.value;
-    // console.log({ message });
-    // sub.publish({ message });
     fetch(
       '/topics', {
         method: 'POST',
@@ -53,14 +24,74 @@ function App() {
       });
   };
 
-  console.log('before return');
+  return (
+    <form onSubmit={handleSubmit}>
+      <input ref={inputRef} type='text' />
+    </form>
+  );
+}
+
+function Topics() {
+  const [topics, setTopics] = useState([]);
+  const centrifuge = useContext(CentrifugeContext);
+
+  useEffect(() => {
+    if (!centrifuge) return;
+    const sub = centrifuge.newSubscription('topics');
+    // console.log({sub});
+    sub.on('publication', function (ctx) {
+      // console.log('publication:', { ctx });
+      setTopics(a => [ctx.data.topic, ...a]);
+    }).on('subscribing', function (ctx) {
+      console.log('subscribing:', { ctx });
+    }).on('subscribed', function (ctx) {
+      console.log('subscribed:', { ctx });
+    }).on('unsubscribed', function (ctx) {
+      console.log('unsubscribed:', { ctx });
+    }).subscribe();
+  }, [centrifuge]);
+
   return (
     <>
-      <p>counter: {counter}</p>
-      <form onSubmit={handleSubmit}>
-        <input ref={inputRef} type='text' />
-      </form>
+      <NewTopic />
+      <ul>
+        {
+          topics.map((topic) => {
+            return <li key={topic._id}>{ topic.message }</li>;
+          })
+        }
+      </ul>
     </>
+  );
+}
+
+function App() {
+  const [counter, setCounter] = useState(0);
+  const [centrifuge, setCentrifuge] = useState();
+
+  useEffect(() => {
+    async function getToken() {
+      const res = await fetch('/centrifugo/token');
+      const data = await res.json();
+      console.log({data});
+      return data.token;
+    }
+
+    const centrifuge = new Centrifuge("ws://localhost:8000/connection/websocket", { getToken });
+    setCentrifuge(centrifuge);
+    centrifuge.on('connecting', function (ctx) {
+      console.log('connecting:', { ctx });
+    }).on('connected', function (ctx) {
+      console.log('connected:', { ctx });
+    }).on('disconnected', function (ctx) {
+      console.log('disconnected:', { ctx });
+    }).connect();
+  }, []);
+
+  return (
+    <CentrifugeContext.Provider value={centrifuge}>
+      <Topics />
+    </CentrifugeContext.Provider>
   );
 }
 
