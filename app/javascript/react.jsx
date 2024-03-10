@@ -81,13 +81,19 @@ function Topics() {
 
 function Topic() {
   const { _id } = useParams();
+  const [topic, setTopic] = useState();
+
+  useEffect(() => {
+    fetch(`/api/topics/${_id}`).then(res => res.json()).then((topic) => setTopic(topic));
+  }, []);
 
   return (
-    <p>{ _id }</p>
+    <>
+      <Link to='/'>Topics</Link>
+      <p>{ topic?.message }</p>
+    </>
   );
 }
-
-
 
 function App() {
   const [counter, setCounter] = useState(0);
