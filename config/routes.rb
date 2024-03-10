@@ -10,7 +10,9 @@ Rails.application.routes.draw do
     get 'topics/:id' => 'application#index'
 
     scope 'api' do
-      resources :topics, only: [:create, :index, :show]
+      resources :topics, only: [:create, :index, :show] do
+        resources :comments, only: [:create, :index]
+      end
 
       namespace :centrifugo do
         resource :token, only: [:show]

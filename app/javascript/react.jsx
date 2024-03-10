@@ -79,18 +79,68 @@ function Topics() {
   );
 }
 
+function NewComment({ topic }) {
+  const inputRef = useRef(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const message = inputRef.current.value;
+    fetch(
+      `/api/topics/${topic._id}/comments`, {
+        method: 'POST',
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name=csrf-token]').getAttribute('content'),
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ comment: { message }})
+      })
+      .then(res => {
+        console.log({ res });
+      });
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input ref={inputRef} type='text' />
+    </form>
+  );
+}
+
 function Topic() {
   const { _id } = useParams();
   const [topic, setTopic] = useState();
+  const [comments, setComments] = useState([]);
+  const centrifuge = useContext(CentrifugeContext);
+
+  useEffect(() => {
+    if (!centrifuge) return;
+    const sub = centrifuge.newSubscription(`topics/${_id}`);
+    sub.on('publication', function (ctx) {
+      setComments(a => [...a, ctx.data.comment]);
+    }).subscribe();
+
+    return ()  => { centrifuge.removeSubscription(sub); };
+  }, [centrifuge]);
 
   useEffect(() => {
     fetch(`/api/topics/${_id}`).then(res => res.json()).then((topic) => setTopic(topic));
+    fetch(`/api/topics/${_id}/comments`).then(res => res.json()).then((comments) => setComments(comments));
   }, []);
+
+  const lists = (
+    comments.map((comment) => {
+      return <li key={comment._id}>{ comment.message }</li>;
+    })
+  );
 
   return (
     <>
       <Link to='/'>Topics</Link>
       <p>{ topic?.message }</p>
+      <ul>
+        { lists }
+      </ul>
+      <NewComment {...{topic}} />
     </>
   );
 }

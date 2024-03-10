@@ -1,8 +1,8 @@
-class Topic
+class Comment
   include Mongoid::Document
   include Mongoid::Timestamps
   include AsFlattenOidJson
 
+  belongs_to :topic
   field :message, type: String
-  has_many :comments
 end
