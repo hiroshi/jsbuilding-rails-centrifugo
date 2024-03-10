@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import React, {useEffect, useState, useRef, useContext, createContext} from 'react';
+import { createBrowserRouter, RouterProvider, Link, useParams } from 'react-router-dom';
 import { Centrifuge } from 'centrifuge';
 
 const CentrifugeContext = createContext(null);
@@ -11,7 +12,7 @@ function NewTopic() {
     e.preventDefault();
     const message = inputRef.current.value;
     fetch(
-      '/topics', {
+      '/api/topics', {
         method: 'POST',
         headers: {
           'X-CSRF-Token': document.querySelector('meta[name=csrf-token]').getAttribute('content'),
@@ -50,29 +51,43 @@ function Topics() {
     }).on('unsubscribed', function (ctx) {
       console.log('unsubscribed:', { ctx });
     }).subscribe();
+
+    return ()  => { centrifuge.removeSubscription(sub); };
   }, [centrifuge]);
 
   useEffect(() => {
-    fetch(`/topics?limit=${limit}`)
+    fetch(`/api/topics?limit=${limit}`)
       .then(res => res.json())
       .then((topics) => {
         setTopics(topics);
       });
   }, []);
 
+  const lists = (
+    topics.map((topic) => {
+      return <li key={topic._id}><Link to={`/topics/${topic._id}`}>{ topic.message }</Link></li>;
+    })
+  );
+
   return (
     <>
       <NewTopic />
       <ul>
-        {
-          topics.map((topic) => {
-            return <li key={topic._id}>{ topic.message }</li>;
-          })
-        }
+        { lists }
       </ul>
     </>
   );
 }
+
+function Topic() {
+  const { _id } = useParams();
+
+  return (
+    <p>{ _id }</p>
+  );
+}
+
+
 
 function App() {
   const [counter, setCounter] = useState(0);
@@ -80,7 +95,7 @@ function App() {
 
   useEffect(() => {
     async function getToken() {
-      const res = await fetch('/centrifugo/token');
+      const res = await fetch('/api/centrifugo/token');
       const data = await res.json();
       console.log({data});
       return data.token;
@@ -97,12 +112,16 @@ function App() {
     }).connect();
   }, []);
 
+  const router = createBrowserRouter([
+    { path: '/', element: <Topics /> },
+    { path: '/topics/:_id', element: <Topic /> },
+  ]);
+
   return (
     <CentrifugeContext.Provider value={centrifuge}>
-      <Topics />
+      <RouterProvider router={router} />
     </CentrifugeContext.Provider>
   );
 }
 
-const root = createRoot(document.getElementById('react-root'));
-root.render(<App />);
+createRoot(document.getElementById('react-root')).render(<App />);

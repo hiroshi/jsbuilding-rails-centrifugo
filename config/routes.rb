@@ -7,11 +7,14 @@ Rails.application.routes.draw do
 
     # Defines the root path route ("/")
     root 'application#index'
+    get 'topics/:id' => 'application#index'
 
-    resources :topics, only: [:create, :index]
+    scope 'api' do
+      resources :topics, only: [:create, :index, :show]
 
-    namespace :centrifugo do
-      resource :token, only: [:show]
+      namespace :centrifugo do
+        resource :token, only: [:show]
+      end
     end
   end
 end
