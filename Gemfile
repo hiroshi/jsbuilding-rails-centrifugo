@@ -7,6 +7,9 @@ gem "jsbundling-rails", "~> 1.3"
 gem "mongoid"
 gem "rest-client", "~> 2.1"
 gem "jwt"
+gem "devise", "~> 4.9"
+gem "omniauth-google-oauth2", "~> 1.1"
+gem "omniauth-rails_csrf_protection", "~> 1.0"
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"

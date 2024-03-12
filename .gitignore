@@ -6,3 +6,4 @@
 /config/master.key
 
 /centrifugo/config.json
+development.env

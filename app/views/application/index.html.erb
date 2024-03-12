@@ -1,1 +1,10 @@
+<% if user_signed_in? %>
+  <p>
+    <%= image_tag current_user.image, width: 32 %>
+    <%= current_user.email %>
+  </p>
+<% else %>
+  <%= button_to "Sign in with Google", user_google_oauth2_omniauth_authorize_path, data: { turbo: false } %>
+<% end %>
+
 <div id='react-root'></div>
