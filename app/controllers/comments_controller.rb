@@ -1,10 +1,13 @@
 class CommentsController < ApplicationController
+  before_action :authenticate_user!
+
   before_action do
     @topic = Topic.find(params[:topic_id])
   end
 
   def create
-    comment = @topic.comments.create!(params.require(:comment).permit(:message))
+    comment_params = params.require(:comment).permit(:message).merge(user: current_user)
+    comment = @topic.comments.create!(comment_params)
     Centrifugo.publish(channel: "topics/#{@topic._id}", data: comment.as_json(root: true))
     head :created
   end

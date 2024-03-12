@@ -3,6 +3,8 @@ class Topic
   include Mongoid::Timestamps
   include AsFlattenOidJson
 
-  field :message, type: String
+  belongs_to :user
   has_many :comments
+
+  field :message, type: String
 end
