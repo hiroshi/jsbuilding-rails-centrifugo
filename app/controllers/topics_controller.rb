@@ -9,10 +9,16 @@ class TopicsController < ApplicationController
   end
 
   def index
-    render json: Topic.limit(params[:limit].presence || 5).order(_id: :desc).as_json
+    render json: Topic.limit(params[:limit].presence || 5).order(_id: :desc).as_json(as_json_options)
   end
 
   def show
-    render json: Topic.find(params[:id]).as_json
+    render json: Topic.find(params[:id]).as_json(as_json_options)
+  end
+
+  private
+
+  def as_json_options
+    { include: { user: User.as_json_options } }
   end
 end

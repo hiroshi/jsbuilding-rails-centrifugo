@@ -9,21 +9,24 @@ class User
   field :provider, type: String
   field :uid, type: String
   field :name, type: String
-  field :image, type: String
+  field :image_url, type: String
   def self.from_omniauth(auth)
     find_or_create_by(provider: auth.provider, uid: auth.uid) do |user|
       user.email = auth.info.email
-      # user.password = Devise.friendly_token[0, 20]
-      user.name = auth.info.name   # assuming the user model has a name
-      user.image = auth.info.image # assuming the user model has an image
-      # If you are using confirmable and the provider(s) you use validate emails, 
+      user.name = auth.info.name
+      user.image_url = auth.info.image
+      # If you are using confirmable and the provider(s) you use validate emails,
       # uncomment the line below to skip the confirmation emails.
       # user.skip_confirmation!
     end
   end
 
-  ## Database authenticatable
   field :email,              type: String
+
+  def self.as_json_options
+    { only: [:email, :name, :image_url] }
+  end
+
   # field :encrypted_password, type: String, default: ""
 
   # ## Recoverable

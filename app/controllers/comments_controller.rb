@@ -13,7 +13,7 @@ class CommentsController < ApplicationController
   end
 
   def index
-    comments = @topic.comments
-    render json: comments.as_json
+    as_json_options = { include: { user: User.as_json_options } }
+    render json: @topic.comments.as_json(as_json_options)
   end
 end

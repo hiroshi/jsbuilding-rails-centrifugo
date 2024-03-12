@@ -5,6 +5,12 @@ import { Centrifuge } from 'centrifuge';
 
 const CentrifugeContext = createContext(null);
 
+function UserImage({ user }) {
+  return (
+    <img src={user.image_url} width='18' title={user.email} />
+  );
+}
+
 function NewTopic() {
   const inputRef = useRef(null);
 
@@ -52,7 +58,7 @@ function Topics() {
       console.log('unsubscribed:', { ctx });
     }).subscribe();
 
-    return ()  => { centrifuge.removeSubscription(sub); };
+    return () => centrifuge.removeSubscription(sub);
   }, [centrifuge]);
 
   useEffect(() => {
@@ -65,7 +71,12 @@ function Topics() {
 
   const lists = (
     topics.map((topic) => {
-      return <li key={topic._id}><Link to={`/topics/${topic._id}`}>{ topic.message }</Link></li>;
+      return (
+        <li key={topic._id}>
+          { topic.user && <UserImage user={topic.user} /> }
+          <Link to={`/topics/${topic._id}`}>{ topic.message }</Link>
+        </li>
+      );
     })
   );
 
@@ -129,14 +140,28 @@ function Topic() {
 
   const lists = (
     comments.map((comment) => {
-      return <li key={comment._id}>{ comment.message }</li>;
+      return (
+        <li key={comment._id}>
+          { comment.user && <UserImage user={comment.user} /> }
+          { comment.message }
+        </li>
+      );
     })
   );
 
   return (
     <>
       <Link to='/'>Topics</Link>
-      <p>{ topic?.message }</p>
+      <div>
+        {
+          topic && (
+            <>
+              <UserImage user={topic.user} />
+              { topic.message }
+            </>
+          )
+        }
+      </div>
       <ul>
         { lists }
       </ul>
