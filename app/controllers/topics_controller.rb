@@ -4,7 +4,7 @@ class TopicsController < ApplicationController
   def create
     topic_params = params.require(:topic).permit(:message).merge(user: current_user)
     topic = Topic.create!(topic_params)
-    Centrifugo.publish(channel: 'topics', data: topic.as_json(root: true))
+    Centrifugo.publish(channel: 'topics', data: topic.as_json(as_json_options.merge(root: true)))
     head :created
   end
 
