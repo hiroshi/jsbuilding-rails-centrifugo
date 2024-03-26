@@ -1,0 +1,17 @@
+[
+  {
+    "name": "delete-old",
+    "action": {"type": "Delete"},
+    "condition": {
+      "olderThan": "1d",
+      "tagState": "any"
+    }
+  },
+  {
+    "name": "keep-minimum-versions",
+    "action": {"type": "Keep"},
+    "mostRecentVersions": {
+      "keepCount": 1
+    }
+  }
+]

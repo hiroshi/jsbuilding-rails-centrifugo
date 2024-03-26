@@ -5,5 +5,5 @@
 !/app/assets/builds/.keep
 /config/master.key
 
-/centrifugo/config.json
+/centrifugo/*.json
 development.env

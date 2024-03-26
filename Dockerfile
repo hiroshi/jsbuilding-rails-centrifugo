@@ -1,11 +1,47 @@
-FROM ruby:3.2-slim
-RUN apt update && apt install -y gcc make
+# https://github.com/rails/rails/blob/main/railties/lib/rails/generators/rails/app/templates/Dockerfile.tt
+FROM ruby:3.2-slim as base
 
+FROM base as dev
+RUN apt update && apt install -y gcc make
 # https://fly.io/docs/rails/cookbooks/node/
 RUN curl -sL https://deb.nodesource.com/setup_current.x | bash - &&\
     apt-get update && \
     apt-get install --yes --no-install-recommends nodejs npm
 ENV PATH=/app/node_modules/.bin:$PATH
+
+FROM dev as build
+# bundle
+ENV RAILS_ENV="production" \
+    BUNDLE_DEPLOYMENT="1" \
+    BUNDLE_PATH="/usr/local/bundle" \
+    BUNDLE_WITHOUT="development"
+COPY Gemfile Gemfile.lock /app/
+WORKDIR /app
+RUN bundle install && \
+    rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
+    bundle exec bootsnap precompile --gemfile
+# esbuild
+COPY package.json package-lock.json /app/
+RUN npm ci
+COPY app/javascript /app/app/javascript/
+RUN esbuild app/javascript/application.js --bundle --outdir=app/assets/builds
+# Precompiling assets for production without requiring secret RAILS_MASTER_KEY
+COPY . /app
+RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+
+FROM base as deployment
+ENV RAILS_ENV="production" \
+    BUNDLE_DEPLOYMENT="1" \
+    BUNDLE_PATH="/usr/local/bundle" \
+    BUNDLE_WITHOUT="development"
+COPY . /app
+COPY --from=build /usr/local/bundle/ /usr/local/bundle/
+COPY --from=build /app/public/assets /app/public/assets
+WORKDIR /app
+
+
+
+
 # # syntax = docker/dockerfile:1
 
 # # Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile

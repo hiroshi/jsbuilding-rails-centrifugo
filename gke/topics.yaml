@@ -1,0 +1,56 @@
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: topics
+  labels:
+    app: topics
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: topics
+  template:
+    metadata:
+      labels:
+        app: topics
+    spec:
+      containers:
+      - name: topics
+        image: us-west1-docker.pkg.dev/topics-server/topics/topics:0.2
+        imagePullPolicy: Always
+        command: ['./bin/rails', 'server', '-p', '3003', '-e', 'production']
+        resources:
+          requests:
+            cpu: 10m
+            memory: 20Mi
+        ports:
+        - containerPort: 3003
+        env:
+        - name: SECRET_KEY_BASE
+          value: hoge
+        - name: CENTRIFUGO_HOST
+          value: wss:centrifugo.yakitara.com
+        envFrom:
+        - secretRef:
+            name: topics-env
+        volumeMounts:
+        - name: centrifugo-config
+          mountPath: /app/centrifugo
+          readOnly: true
+      volumes:
+      - name: centrifugo-config
+        secret:
+          secretName: centrifugo-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: topics
+spec:
+  selector:
+    app: topics
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3003

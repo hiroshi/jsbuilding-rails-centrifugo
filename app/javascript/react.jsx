@@ -182,7 +182,8 @@ function App() {
       return data.token;
     }
 
-    const centrifuge = new Centrifuge("ws://localhost:8000/connection/websocket", { getToken });
+    const host = document.getElementsByName('centrifugo-host')[0].content;
+    const centrifuge = new Centrifuge(`${host}/connection/websocket`, { getToken });
     setCentrifuge(centrifuge);
     centrifuge.on('connecting', function (ctx) {
       console.log('connecting:', { ctx });

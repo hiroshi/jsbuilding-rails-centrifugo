@@ -1,3 +1,9 @@
+production:
+  clients:
+    default:
+      database: topics_prod
+      hosts:
+        - mongo:27017
 development:
   # Configure available database clients. (required)
   clients:

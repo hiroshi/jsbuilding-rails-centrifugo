@@ -1,0 +1,50 @@
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: centrifugo
+  labels:
+    app: centrifugo
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: centrifugo
+  template:
+    metadata:
+      labels:
+        app: centrifugo
+    spec:
+      containers:
+      - name: centrifugo
+        image: centrifugo/centrifugo:v5
+        # imagePullPolicy: Always
+        command: ['centrifugo', '--admin', '-c', 'config.json', '--port', '8000']
+        resources:
+          requests:
+            cpu: 10m
+            memory: 10Mi
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: config
+          mountPath: /centrifugo
+          readOnly: true
+      volumes:
+      - name: config
+        secret:
+          secretName: centrifugo-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: centrifugo
+spec:
+  selector:
+    app: centrifugo
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
