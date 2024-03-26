@@ -34,7 +34,7 @@ function NewTopic() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input ref={inputRef} type='text' />
+      <input ref={inputRef} type='text' placeholder="New topic" />
     </form>
   );
 }
@@ -114,7 +114,7 @@ function NewComment({ topic }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input ref={inputRef} type='text' />
+      <input ref={inputRef} type='text' placeholder="comment" />
     </form>
   );
 }
@@ -154,6 +154,7 @@ function Topic() {
   return (
     <>
       <Link to='/'>Topics</Link>
+      <hr/>
       <div>
         {
           topic && (
