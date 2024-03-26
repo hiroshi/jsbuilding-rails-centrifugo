@@ -20,6 +20,8 @@ services:
       - development.env
     ports:
       - 127.0.0.1:3003:3003
+    tmpfs:
+      - /app/tmp/pids
   js:
     << : *app
     command: ['esbuild', 'app/javascript/application.js', '--bundle', '--outdir=app/assets/builds', '--watch=forever', '--sourcemap']
