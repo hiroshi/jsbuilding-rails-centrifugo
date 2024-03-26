@@ -28,6 +28,7 @@ function NewTopic() {
       })
       .then(res => {
         console.log({ res });
+        e.target.reset();
       });
   };
 
@@ -107,6 +108,7 @@ function NewComment({ topic }) {
       })
       .then(res => {
         console.log({ res });
+        e.target.reset();
       });
   };
 
