@@ -73,4 +73,5 @@ gke-node-pool:
 	  --machine-type=e2-micro \
 	  --spot \
 	  --num-nodes=1 \
-	  --disk-type=pd-standard --disk-size=10G
+	  --disk-type=pd-standard --disk-size=10G \
+	  --enable-private-nodes
