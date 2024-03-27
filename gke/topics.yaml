@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: topics
-        image: us-west1-docker.pkg.dev/topics-server/topics/topics:0.2
+        image: us-west1-docker.pkg.dev/topics-server/topics/topics:$TAG
         imagePullPolicy: Always
         command: ['./bin/rails', 'server', '-p', '3003', '-e', 'production']
         resources:

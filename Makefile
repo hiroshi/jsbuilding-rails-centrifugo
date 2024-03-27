@@ -1,17 +1,24 @@
 PROJECT := topics-server
-IMAGE := us-west1-docker.pkg.dev/$(PROJECT)/topics/topics:0.2
-build:
-	docker build --platform=linux/amd64 -t $(IMAGE)  ./
+IMAGE = us-west1-docker.pkg.dev/$(PROJECT)/topics/topics
 
-push:
-	docker push $(IMAGE)
+tag:
+	$(eval TAG=$(shell git rev-parse --short HEAD))
+
+build: tag
+	docker build --platform=linux/amd64 -t $(IMAGE):$(TAG)  ./
+
+push: tag
+	docker push $(IMAGE):$(TAG)
+	docker tag $(IMAGE):$(TAG) $(IMAGE):latest
+	docker push $(IMAGE):latest
 
 ## GKE
 deploy: topics
 
 # topics
-topics:
-	kubectl apply -f gke/topics.yaml
+export TAG
+topics: tag
+	cat gke/topics.yaml | envsubst | kubectl apply -f -
 
 secret-topics-env:
 	kubectl create secret generic topics-env --from-env-file=development.env
