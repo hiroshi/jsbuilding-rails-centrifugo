@@ -74,7 +74,7 @@ function Topics() {
     topics.map((topic) => {
       return (
         <li key={topic._id}>
-          { topic.user && <UserImage user={topic.user} /> }
+          { topic.user && <UserImage user={topic.user} /> }&nbsp;
           <Link to={`/topics/${topic._id}`}>{ topic.message }</Link>
         </li>
       );
@@ -83,8 +83,8 @@ function Topics() {
 
   return (
     <>
-      <NewTopic />
       <ul>
+        <li key='new'><NewTopic /></li>
         { lists }
       </ul>
     </>
@@ -167,8 +167,8 @@ function Topic() {
       </div>
       <ul>
         { lists }
+        <li key='new'><NewComment {...{topic}} /></li>
       </ul>
-      <NewComment {...{topic}} />
     </>
   );
 }
