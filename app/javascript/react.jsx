@@ -72,10 +72,12 @@ function Topics() {
 
   const lists = (
     topics.map((topic) => {
+      const comments_count = topic.comments_count > 0 && `(${topic.comments_count})`;
       return (
         <li key={topic._id}>
           { topic.user && <UserImage user={topic.user} /> }&nbsp;
           <Link to={`/topics/${topic._id}`}>{ topic.message }</Link>
+          { comments_count }
         </li>
       );
     })
