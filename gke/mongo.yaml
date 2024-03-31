@@ -1,3 +1,6 @@
+
+
+---
 # https://cloud.google.com/kubernetes-engine/docs/how-to/stateful-apps#creating_a_statefulset
 apiVersion: apps/v1
 kind: StatefulSet
@@ -33,6 +36,7 @@ spec:
   - metadata:
       name: mongo-data
     spec:
+      storageClassName: standard
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
