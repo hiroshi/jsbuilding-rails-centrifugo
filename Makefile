@@ -19,6 +19,7 @@ deploy: topics
 export TAG
 topics: tag
 	cat gke/topics.yaml | envsubst | kubectl apply -f -
+	kubectl rollout status -w deployment/topics
 
 secret-topics-env:
 	kubectl create secret generic topics-env --from-env-file=development.env
