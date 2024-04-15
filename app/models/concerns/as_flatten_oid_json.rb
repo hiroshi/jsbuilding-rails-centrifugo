@@ -3,8 +3,11 @@ module AsFlattenOidJson
   # extend ActiveSupport::Concern
 
   def flatten_oid(json)
-    if json.is_a?(Hash)
-      json.map{|k, v| [k, v&.[]('$oid') || flatten_oid(v)]}.to_h
+    case json
+    when Hash
+      json.map{|k, v| [k, v.is_a?(Hash) && v&.[]('$oid') || flatten_oid(v)]}.to_h
+    when Array
+      json.map{|e| flatten_oid(e) }
     else
       json
     end

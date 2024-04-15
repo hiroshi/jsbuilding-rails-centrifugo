@@ -9,15 +9,19 @@ Rails.application.routes.draw do
 
     # Defines the root path route ("/")
     root 'application#index'
-    get 'topics/:id' => 'application#index'
+    get '/rooms/:id' => 'application#index'
+    get '/rooms/:room_id/topics/:id' => 'application#index'
 
     scope 'api' do
-      resources :topics, only: [:create, :index, :show] do
-        resources :comments, only: [:create, :index]
+      resources :rooms, only: [:create, :index, :show] do
+        resources :topics, only: [:create, :index, :show] do
+          resources :comments, only: [:create, :index]
+        end
       end
-
-      namespace :centrifugo do
-        resource :token, only: [:show]
+      scope 'centrifugo' do
+        #   resource :token, only: [:show]
+        get 'token' => 'centrifugo#token'
+        post 'subscribe' => 'centrifugo#subscribe'
       end
     end
   end

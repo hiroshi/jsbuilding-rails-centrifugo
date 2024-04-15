@@ -1,5 +1,9 @@
 class User
   include Mongoid::Document
+  include AsFlattenOidJson
+
+  has_and_belongs_to_many :rooms, inverse_of: nil
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   # devise :database_authenticatable, :registerable,
@@ -23,8 +27,14 @@ class User
 
   field :email,              type: String
 
-  def self.as_json_options
-    { only: [:email, :name, :image_url] }
+  # def self.as_json_options
+  #   { only: [:email, :name, :image_url] }
+  # end
+
+  def as_json(options={})
+    # "hoge"
+    # super(only: [:_id])
+    super(options.merge(only: [:_id, :email, :name, :image_url]))
   end
 
   # field :encrypted_password, type: String, default: ""

@@ -7,4 +7,8 @@ class Comment
   belongs_to :topic
 
   field :message, type: String
+
+  def as_json(options={})
+    super(options.merge(include: [:user]))
+  end
 end

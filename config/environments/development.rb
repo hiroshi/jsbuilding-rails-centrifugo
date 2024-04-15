@@ -76,4 +76,5 @@ Rails.application.configure do
   config.action_controller.raise_on_missing_callback_actions = true
 
   config.hosts << "topics.lvh.me:3003"
+  config.hosts << "app:3003"
 end

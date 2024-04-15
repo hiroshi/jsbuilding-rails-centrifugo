@@ -35,7 +35,7 @@ services:
   mongo:
     image: mongo:7.0
     volumes:
-      - mongo:/data
+      - mongo:/data/db
 
 volumes:
   bundle:
