@@ -343,11 +343,16 @@ function App() {
 
   useEffect(() => {
     async function getToken() {
-      const res = await fetch("/api/centrifugo/token");
-      const data = await res.json();
-      // console.log({ data });
-      setCurrentUserId(JSON.parse(atob(data.token.split(".")[1])).sub);
-      return data.token;
+      try {
+        const res = await fetch("/api/centrifugo/token");
+        const data = await res.json();
+        setCurrentUserId(JSON.parse(atob(data.token.split(".")[1])).sub);
+        return data.token;
+      } catch {
+        // https://centrifugal.dev/docs/4/transports/client_api#client-connection-token
+        // If your callback returns an empty string – this means the user has no permission to connect to Centrifugo and the Client will move to a disconnected state
+        return '';
+      }
     }
 
     const host = document.getElementsByName("centrifugo-host")[0].content;
@@ -369,8 +374,10 @@ function App() {
       .connect();
   }, []);
 
+  const rootElement = currentUserId ? <Rooms /> : <></>;
+
   const router = createBrowserRouter([
-    { path: "/", element: <Rooms /> },
+    { path: "/", element: rootElement },
     { path: "/rooms/:_id", element: <Room /> },
     // { path: '/', element: <Topics /> },
     { path: "/rooms/:room_id/topics/:_id", element: <Topic /> },
