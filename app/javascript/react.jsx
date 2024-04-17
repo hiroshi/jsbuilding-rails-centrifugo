@@ -283,8 +283,7 @@ function Rooms() {
 
 function Room() {
   const { _id } = useParams();
-  const [room, setRoom] = useState({ _id });
-  // const [topics, setTopics] = useState([]);
+  const [room, setRoom] = useState();
   const { centrifuge } = useContext(AppContext);
 
   useEffect(() => {
@@ -305,33 +304,23 @@ function Room() {
     fetch(`/api/rooms/${_id}`)
       .then((res) => res.json())
       .then((room) => setRoom(room));
-
-    // fetch(`/api/rooms/${_id}/topics`)
-    //   .then((res) => res.json())
-    //   .then((topics) => setTopics(topics));
   }, []);
-
-  // const lists = topics.map((topic) => {
-  //   return (
-  //     <li key={topic._id}>
-  //       {topic.user && <UserImage user={topic.user} />}
-  //       <Link to={`/rooms/${room._id}/topics/${topic._id}`}>
-  //         {topic.message}
-  //       </Link>
-  //     </li>
-  //   );
-  // });
 
   return (
     <>
       <Link to="/">Rooms</Link>
       <hr />
-      <div>
-        {room && <>room: {room.name}</>}{" "}
-        {room.users &&
-          room.users.map((user) => <UserImage {...{ user, key: user._id }} />)}
-      </div>
-      <Topics {...{ room }} />
+      { room &&
+      <>
+        <div>
+          room: { room.name }
+        </div>
+        <div>
+          users: { room.users.map((user) => <UserImage {...{ user, key: user._id }} />) }
+        </div>
+        <Topics {...{ room }} />
+      </>
+      }
     </>
   );
 }
