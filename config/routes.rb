@@ -17,6 +17,9 @@ Rails.application.routes.draw do
         resources :topics, only: [:create, :index, :show] do
           resources :comments, only: [:create, :index]
         end
+        scope module: 'room' do
+          resources :users, only: [:create]
+        end
       end
       scope 'centrifugo' do
         #   resource :token, only: [:show]
