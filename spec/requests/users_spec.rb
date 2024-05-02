@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "Users", type: :request do
   include Devise::Test::IntegrationHelpers
 
-  describe "POST /rooms/:room_id/users" do
+  describe "POST /api/rooms/:room_id/users" do
     let!(:room) { Room.create! }
 
     context 'user is created by the email' do

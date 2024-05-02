@@ -281,10 +281,39 @@ function Rooms() {
   );
 }
 
+function RoomInvite({room, setInviting}) {
+  const inputRef = useRef();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const email = inputRef.current.value;
+    fetch(`/api/rooms/${room._id}/users`, {
+      method: 'POST',
+      headers: {
+        "X-CSRF-Token": document
+          .querySelector("meta[name=csrf-token]")
+          .getAttribute("content"),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({email})
+    }).then((res) => {
+      e.target.reset();
+      setInviting(false);
+    });
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input ref={inputRef} placeholder="email to invite" />
+    </form>
+  );
+}
+
 function Room() {
   const { _id } = useParams();
   const [room, setRoom] = useState();
   const { centrifuge } = useContext(AppContext);
+  const [inviting, setInviting] = useState(false);
 
   useEffect(() => {
     if (!centrifuge) return;
@@ -306,6 +335,10 @@ function Room() {
       .then((room) => setRoom(room));
   }, []);
 
+  const handleClickInvite = (e) => {
+    setInviting(!inviting);
+  };
+
   return (
     <>
       <Link to="/">Rooms</Link>
@@ -317,6 +350,8 @@ function Room() {
         </div>
         <div>
           users: { room.users.map((user) => <UserImage {...{ user, key: user._id }} />) }
+          <button title='invite' onClick={handleClickInvite}>+</button>
+          { inviting && <RoomInvite {...{room} }/> }
         </div>
         <Topics {...{ room }} />
       </>
