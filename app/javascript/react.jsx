@@ -6,13 +6,25 @@ import React, {
   useContext,
   createContext,
 } from "react";
+
 import {
   createBrowserRouter,
   RouterProvider,
   Link,
   useParams,
 } from "react-router-dom";
+
 import { Centrifuge } from "centrifuge";
+
+function csrfTokenHeaders() {
+  const token = document
+    .querySelector("meta[name=csrf-token]")
+    .getAttribute("content");
+  return {
+    "X-CSRF-Token": token,
+    "Content-Type": "application/json",
+  };
+}
 
 const AppContext = createContext(null);
 
@@ -29,12 +41,7 @@ function NewTopic({ room }) {
     const message = inputRef.current.value;
     fetch(`/api/rooms/${room._id}/topics`, {
       method: "POST",
-      headers: {
-        "X-CSRF-Token": document
-          .querySelector("meta[name=csrf-token]")
-          .getAttribute("content"),
-        "Content-Type": "application/json",
-      },
+      headers: csrfTokenHeaders(),
       body: JSON.stringify({ topic: { message } }),
     }).then((res) => {
       console.log({ res });
@@ -118,12 +125,7 @@ function NewComment({ topic }) {
     const message = inputRef.current.value;
     fetch(`/api/topics/${topic._id}/comments`, {
       method: "POST",
-      headers: {
-        "X-CSRF-Token": document
-          .querySelector("meta[name=csrf-token]")
-          .getAttribute("content"),
-        "Content-Type": "application/json",
-      },
+      headers: csrfTokenHeaders(),
       body: JSON.stringify({ comment: { message } }),
     }).then((res) => {
       console.log({ res });
@@ -207,12 +209,7 @@ function NewRoom() {
     const name = inputRef.current.value;
     fetch("/api/rooms", {
       method: "POST",
-      headers: {
-        "X-CSRF-Token": document
-          .querySelector("meta[name=csrf-token]")
-          .getAttribute("content"),
-        "Content-Type": "application/json",
-      },
+      headers: csrfTokenHeaders(),
       body: JSON.stringify({ room: { name } }),
     }).then((res) => {
       console.log({ res });
@@ -289,12 +286,7 @@ function RoomInvite({room, setInviting}) {
     const email = inputRef.current.value;
     fetch(`/api/rooms/${room._id}/users`, {
       method: 'POST',
-      headers: {
-        "X-CSRF-Token": document
-          .querySelector("meta[name=csrf-token]")
-          .getAttribute("content"),
-        "Content-Type": "application/json",
-      },
+      headers: csrfTokenHeaders(),
       body: JSON.stringify({email})
     }).then((res) => {
       e.target.reset();
