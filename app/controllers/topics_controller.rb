@@ -7,7 +7,6 @@ class TopicsController < ApplicationController
   def create
     topic_params = params.require(:topic).permit(:message).merge(user: current_user)
     topic = @room.topics.create!(topic_params)
-    p topic.to_json(root: true)
     Centrifugo.publish(channel: "/rooms/#{@room._id}/topics", data: topic.as_json(root: true))
     head :created
   end
@@ -17,7 +16,7 @@ class TopicsController < ApplicationController
   end
 
   def show
-    render json: @room.topics.find(params[:id])
+    render json: @room.topics.find(params[:id]).as_json(include: :room)
   end
 
   # private

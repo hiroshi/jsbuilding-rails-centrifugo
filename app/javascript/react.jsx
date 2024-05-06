@@ -99,7 +99,7 @@ function Topics({ room }) {
     return (
       <li key={topic._id}>
         {topic.user && <UserImage user={topic.user} />}&nbsp;
-        <Link to={`/topics/${topic._id}`}>{topic.message}</Link>
+        <Link to={`/rooms/${room._id}/topics/${topic._id}`}>{topic.message}</Link>
         {comments_count}
       </li>
     );
@@ -117,13 +117,13 @@ function Topics({ room }) {
   );
 }
 
-function NewComment({ topic }) {
+function NewComment({ room_id, topic }) {
   const inputRef = useRef(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const message = inputRef.current.value;
-    fetch(`/api/topics/${topic._id}/comments`, {
+    fetch(`/api/rooms/${room_id}/topics/${topic._id}/comments`, {
       method: "POST",
       headers: csrfTokenHeaders(),
       body: JSON.stringify({ comment: { message } }),
@@ -161,7 +161,7 @@ function Topic() {
   }, [centrifuge]);
 
   useEffect(() => {
-    fetch(`/api/rooms/${room_id}topics/${_id}`)
+    fetch(`/api/rooms/${room_id}/topics/${_id}`)
       .then((res) => res.json())
       .then((topic) => setTopic(topic));
 
@@ -181,7 +181,7 @@ function Topic() {
 
   return (
     <>
-      <Link to={`/rooms/${room_id}`}>Room</Link>
+      <Link to={`/rooms/${room_id}`}>{topic?.room?.name}</Link>
       <hr />
       <div>
         {topic && (
@@ -194,7 +194,7 @@ function Topic() {
       <ul>
         {lists}
         <li key="new">
-          <NewComment {...{ topic }} />
+          <NewComment {...{ room_id, topic }} />
         </li>
       </ul>
     </>

@@ -10,7 +10,7 @@ class Topic
   field :message, type: String
 
   def as_json(options={})
-    super(options.merge(include: {'user' => user})).tap do |result|
+    super(options.merge(include: ([options[:include]].flatten.compact) + ['user'])).tap do |result|
       (options[:root] ? result['topic'] : result)['comments_count'] = comments.count
     end
   end
