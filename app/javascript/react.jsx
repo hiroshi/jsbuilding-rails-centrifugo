@@ -68,7 +68,7 @@ function Topics({ room }) {
     // console.log({sub});
     sub
       .on("publication", function (ctx) {
-        console.log('publication:', { ctx });
+        console.log("publication:", { ctx });
         setTopics((a) => [ctx.data.topic, ...a.slice(0, limit - 1)]);
       })
       .on("subscribing", function (ctx) {
@@ -94,12 +94,17 @@ function Topics({ room }) {
   }, []);
 
   const lists = topics.map((topic) => {
-    const comments_count =
-      topic.comments_count > 0 && <span title={`${topic.comments_count} comments`}>({topic.comments_count})</span>;
+    const comments_count = topic.comments_count > 0 && (
+      <span title={`${topic.comments_count} comments`}>
+        ({topic.comments_count})
+      </span>
+    );
     return (
       <li key={topic._id}>
         {topic.user && <UserImage user={topic.user} />}&nbsp;
-        <Link to={`/rooms/${room._id}/topics/${topic._id}`}>{topic.message}</Link>
+        <Link to={`/rooms/${room._id}/topics/${topic._id}`}>
+          {topic.message}
+        </Link>
         {comments_count}
       </li>
     );
@@ -278,16 +283,16 @@ function Rooms() {
   );
 }
 
-function RoomInvite({room, setInviting}) {
+function RoomInvite({ room, setInviting }) {
   const inputRef = useRef();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const email = inputRef.current.value;
     fetch(`/api/rooms/${room._id}/users`, {
-      method: 'POST',
+      method: "POST",
       headers: csrfTokenHeaders(),
-      body: JSON.stringify({email})
+      body: JSON.stringify({ email }),
     }).then((res) => {
       e.target.reset();
       setInviting(false);
@@ -335,19 +340,22 @@ function Room() {
     <>
       <Link to="/">Rooms</Link>
       <hr />
-      { room &&
-      <>
-        <div>
-          room: { room.name }
-        </div>
-        <div>
-          users: { room.users.map((user) => <UserImage {...{ user, key: user._id }} />) }
-          <button title='invite' onClick={handleClickInvite}>+</button>
-          { inviting && <RoomInvite {...{room} }/> }
-        </div>
-        <Topics {...{ room }} />
-      </>
-      }
+      {room && (
+        <>
+          <div>room: {room.name}</div>
+          <div>
+            users:{" "}
+            {room.users.map((user) => (
+              <UserImage {...{ user, key: user._id }} />
+            ))}
+            <button title="invite" onClick={handleClickInvite}>
+              +
+            </button>
+            {inviting && <RoomInvite {...{ room }} />}
+          </div>
+          <Topics {...{ room }} />
+        </>
+      )}
     </>
   );
 }
@@ -367,7 +375,7 @@ function App() {
       } catch {
         // https://centrifugal.dev/docs/4/transports/client_api#client-connection-token
         // If your callback returns an empty string – this means the user has no permission to connect to Centrifugo and the Client will move to a disconnected state
-        return '';
+        return "";
       }
     }
 
@@ -400,7 +408,7 @@ function App() {
   ]);
 
   return (
-    <AppContext.Provider value={{centrifuge, currentUserId}}>
+    <AppContext.Provider value={{ centrifuge, currentUserId }}>
       <RouterProvider router={router} />
     </AppContext.Provider>
   );
