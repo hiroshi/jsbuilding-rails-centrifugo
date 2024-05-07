@@ -95,7 +95,7 @@ function Topics({ room }) {
 
   const lists = topics.map((topic) => {
     const comments_count =
-      topic.comments_count > 0 && `(${topic.comments_count})`;
+      topic.comments_count > 0 && <span title={`${topic.comments_count} comments`}>({topic.comments_count})</span>;
     return (
       <li key={topic._id}>
         {topic.user && <UserImage user={topic.user} />}&nbsp;
