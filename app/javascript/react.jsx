@@ -32,6 +32,10 @@ function UserImage({ user }) {
   return <img src={user.image_url} width="18" title={user.email} />;
 }
 
+function Users({ users }) {
+  return users.map((user) => <UserImage {...{ user, key: user._id }} />);
+}
+
 function NewTopic({ room }) {
   // console.log({ room });
   const inputRef = useRef(null);
@@ -51,7 +55,7 @@ function NewTopic({ room }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input ref={inputRef} type="text" placeholder="New topic" />
+      <input ref={inputRef} type="text" placeholder="new topic" />
     </form>
   );
 }
@@ -140,7 +144,7 @@ function NewComment({ room_id, topic }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input ref={inputRef} type="text" placeholder="comment" />
+      <input ref={inputRef} type="text" placeholder="new comment" />
     </form>
   );
 }
@@ -186,16 +190,17 @@ function Topic() {
 
   return (
     <>
-      <Link to={`/rooms/${room_id}`}>{topic?.room?.name}</Link>
+      <Link to={`/rooms/${room_id}`}>&lt; room: {topic?.room?.name}</Link>
       <hr />
       <div>
         {topic && (
           <>
-            <UserImage user={topic.user} />
-            {topic.message}
+            <UserImage user={topic.user} /> {topic.message}
           </>
         )}
       </div>
+      <br />
+      comments:
       <ul>
         {lists}
         <li key="new">
@@ -224,7 +229,7 @@ function NewRoom() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input ref={inputRef} type="text" placeholder="New Room" />
+      <input ref={inputRef} type="text" placeholder="new room" />
     </form>
   );
 }
@@ -267,6 +272,7 @@ function Rooms() {
 
   return (
     <>
+      rooms:
       <ul>
         <li key="new">
           <NewRoom />
@@ -274,7 +280,8 @@ function Rooms() {
         {rooms.map((room) => {
           return (
             <li key={room._id}>
-              <Link to={`/rooms/${room._id}`}>{room.name}</Link>
+              <Link to={`/rooms/${room._id}`}>{room.name}</Link>{" "}
+              <Users users={room.users} />
             </li>
           );
         })}
@@ -338,22 +345,21 @@ function Room() {
 
   return (
     <>
-      <Link to="/">Rooms</Link>
+      <Link to="/">&lt; Rooms</Link>
       <hr />
       {room && (
         <>
           <div>room: {room.name}</div>
+          <br />
           <div>
-            users:{" "}
-            {room.users.map((user) => (
-              <UserImage {...{ user, key: user._id }} />
-            ))}
-            <button title="invite" onClick={handleClickInvite}>
+            users: <Users users={room.users} />
+            <button title="invite..." onClick={handleClickInvite}>
               +
             </button>
             {inviting && <RoomInvite {...{ room }} />}
           </div>
-          <Topics {...{ room }} />
+          <br />
+          topics: <Topics {...{ room }} />
         </>
       )}
     </>
