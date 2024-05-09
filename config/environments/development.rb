@@ -77,4 +77,5 @@ Rails.application.configure do
 
   config.hosts << "topics.lvh.me:3003"
   config.hosts << "app:3003"
+  config.hosts << "9-hiroshi-sonoma.local:3003"
 end

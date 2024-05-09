@@ -19,7 +19,8 @@ services:
     env_file:
       - development.env
     ports:
-      - 127.0.0.1:3003:3003
+      # - 127.0.0.1:3003:3003
+      - 0.0.0.0:3003:3003
     tmpfs:
       - /app/tmp/pids
   js:

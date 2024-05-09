@@ -1,5 +1,5 @@
 # https://github.com/rails/rails/blob/main/railties/lib/rails/generators/rails/app/templates/Dockerfile.tt
-FROM ruby:3.2-slim as base
+FROM ruby:3.2.3-slim as base
 
 FROM base as dev
 RUN apt update && apt install -y gcc make

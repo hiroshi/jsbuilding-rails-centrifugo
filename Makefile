@@ -13,36 +13,37 @@ push: tag
 	docker push $(IMAGE):latest
 
 ## GKE
+KUBECTL := kubectl --cluster=gke_topics-server_us-west1-a_topics
 deploy: topics
 
 # topics
 export TAG
 topics: tag
-	cat gke/topics.yaml | envsubst | kubectl apply -f -
-	kubectl rollout status -w deployment/topics
+	cat gke/topics.yaml | envsubst | $(KUBECTL) apply -f -
+	$(KUBECTL) rollout status -w deployment/topics
 
 secret-topics-env:
-	kubectl create secret generic topics-env --from-env-file=development.env
+	$(KUBECTL) create secret generic topics-env --from-env-file=development.env
 
 # mongo
 mongo:
-	kubectl apply -f gke/mongo.yaml
+	$(KUBECTL) apply -f gke/mongo.yaml
 
 # centrifugo
 .PHONY: centrifugo
 centrifugo:
-	kubectl apply -f gke/centrifugo.yaml
+	$(KUBECTL) apply -f gke/centrifugo.yaml
 
 secret-centrifugo-config:
-	kubectl create secret generic centrifugo-config --from-file=config.json=centrifugo/production.json
+	$(KUBECTL) create secret generic centrifugo-config --from-file=config.json=centrifugo/production.json
 
 # cloudflare tunnel
 CLOUDFLARE_TUNNEL_ID := 148bff40-43c9-4b43-ab4d-0e7fd33542a6
 cloudflared:
-	kubectl apply -f gke/cloudflared.yaml
+	$(KUBECTL) apply -f gke/cloudflared.yaml
 
 secret-cloudflare-credentials:
-	kubectl create secret generic cloudflared-credentials \
+	$(KUBECTL) create secret generic cloudflared-credentials \
 	  --from-file=credentials.json=$(HOME)/.cloudflared/$(CLOUDFLARE_TUNNEL_ID).json
 
 # NOTE: After generating add allowed origin
