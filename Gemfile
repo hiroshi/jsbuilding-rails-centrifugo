@@ -7,7 +7,6 @@ gem "rails", "~> 7.1.3", ">= 7.1.3.2"
 gem "mongoid"
 gem "rest-client", "~> 2.1"
 gem "jwt"
-gem "devise", "~> 4.9"
 gem "omniauth-google-oauth2", "~> 1.1"
 gem "omniauth-rails_csrf_protection", "~> 1.0"
 
