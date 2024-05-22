@@ -26,4 +26,13 @@ class User
   def as_json(options={})
     super(options.merge(only: [:_id, :email, :name, :image_url]))
   end
+
+  def geneate_token
+    JWT.encode({ sub: id.to_s }, Rails.application.credentials.secret_key_base)
+  end
+
+  def self.authorize(token:)
+    user_id = JWT.decode(token, Rails.application.credentials.secret_key_base).dig(0, 'sub')
+    User.find(user_id) if user_id
+  end
 end
