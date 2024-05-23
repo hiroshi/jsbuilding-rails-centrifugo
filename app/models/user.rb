@@ -27,7 +27,7 @@ class User
     super(options.merge(only: [:_id, :email, :name, :image_url]))
   end
 
-  def geneate_token
+  def generate_token
     JWT.encode({ sub: id.to_s }, Rails.application.credentials.secret_key_base)
   end
 
