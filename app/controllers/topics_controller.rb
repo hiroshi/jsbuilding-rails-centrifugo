@@ -14,7 +14,6 @@ class TopicsController < ApplicationController
   def index
     index_params = params.permit(:limit, :link)
     criteria = @room.topics
-    # criteria = criteria.where(feed: { link: index_params[:link] }) if index_params[:link].present?
     criteria = criteria.where('feed.link': index_params[:link]) if index_params[:link].present?
     render json: criteria.limit(index_params[:limit].presence || 5).order(_id: :desc)
   end

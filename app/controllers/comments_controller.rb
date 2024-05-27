@@ -15,7 +15,10 @@ class CommentsController < ApplicationController
 
   def index
     # render json: @topic.comments.as_json(as_json_options)
-    render json: @topic.comments
+    index_params = params.permit(:entry_id)
+    criteria = @topic.comments
+    criteria = criteria.where('feed.entry_id': index_params[:entry_id]) if index_params[:entry_id].present?
+    render json: criteria
   end
 
   private

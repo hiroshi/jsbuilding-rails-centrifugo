@@ -5,8 +5,8 @@ RSpec.describe 'Topics', type: :request do
     let(:room) { Room.create! }
     let(:user) { User.create!(rooms: [room]) }
     let(:link) { 'https://example.com/' }
-    let!(:topic) { room.topics.create!(user:, message: 'hoge', feed: { link:, entry_id: '0' }) }
     let!(:other_topic) { room.topics.create!(user:, message: 'fuga') }
+    let!(:topic) { room.topics.create!(user:, message: 'hoge', feed: { link:, entry_id: '0' }) }
 
     before do
       get room_topics_path(room, link:), headers: auth_headers(user:)
