@@ -32,7 +32,7 @@ class User
   end
 
   def self.authorize(token:)
-    user_id = JWT.decode(token, Rails.application.credentials.secret_key_base).dig(0, 'sub')
+    user_id = JWT.decode(token, Rails.application.credentials.secret_key_base).dig(0, 'sub') if token
     User.find(user_id) if user_id
   end
 end

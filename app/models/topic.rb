@@ -8,6 +8,8 @@ class Topic
   has_many :comments
 
   field :message, type: String
+  # field :link, type: String
+  embeds_one :feed
 
   def as_json(options={})
     super(options.merge(include: ([options[:include]].flatten.compact) + ['user'])).tap do |result|

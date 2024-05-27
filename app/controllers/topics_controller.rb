@@ -5,14 +5,18 @@ class TopicsController < ApplicationController
   end
 
   def create
-    topic_params = params.require(:topic).permit(:message).merge(user: current_user)
+    topic_params = params.require(:topic).permit(:message, feed: [:link, :entry_id]).merge(user: current_user)
     topic = @room.topics.create!(topic_params)
     Centrifugo.publish(channel: "/rooms/#{@room._id}/topics", data: topic.as_json(root: true))
     head :created
   end
 
   def index
-    render json: @room.topics.limit(params[:limit].presence || 5).order(_id: :desc)
+    index_params = params.permit(:limit, :link)
+    criteria = @room.topics
+    # criteria = criteria.where(feed: { link: index_params[:link] }) if index_params[:link].present?
+    criteria = criteria.where('feed.link': index_params[:link]) if index_params[:link].present?
+    render json: criteria.limit(index_params[:limit].presence || 5).order(_id: :desc)
   end
 
   def show

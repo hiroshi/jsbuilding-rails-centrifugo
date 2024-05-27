@@ -8,7 +8,7 @@ RSpec.describe "Users", type: :request do
       let(:user) { User.create!(email: 'alis@example.com', rooms: [room]) }
 
       before do
-        post room_users_path(room), params: { email: 'bob@example.com' }, headers: { 'Authorization' => "Bearer #{user.generate_token}" }
+        post room_users_path(room), params: { email: 'bob@example.com' }, headers: auth_headers(user:)
       end
 
       it { expect(response).to have_http_status(:created) }

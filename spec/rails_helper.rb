@@ -59,4 +59,8 @@ RSpec.configure do |config|
       collection.delete_many
     end
   end
+
+  def auth_headers(user:)
+    { 'Authorization' => "Bearer #{user.generate_token}" }
+  end
 end
