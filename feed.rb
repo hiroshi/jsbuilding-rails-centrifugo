@@ -39,7 +39,7 @@ URI.open('https://status.cloud.google.com/feed.atom') do |f|
         unless comment
           comment = { message: title, feed: { link:, entry_id: } }
           p api_post("/api/rooms/#{room_id}/topics/#{topic['_id']}/comments", { comment: })
-          puts "topic(#{topic}) new comment(#{comment})"
+          puts "topic(#{topic.slice('message')}) new comment(#{comment.slice(:feed)})"
         end
       end
     else

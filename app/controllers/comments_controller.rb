@@ -6,7 +6,7 @@ class CommentsController < ApplicationController
   end
 
   def create
-    comment_params = params.require(:comment).permit(:message).merge(user: current_user)
+    comment_params = params.require(:comment).permit(:message, feed: [:entry_id, :link]).merge(user: current_user)
     comment = @topic.comments.create!(comment_params)
     # Centrifugo.publish(channel: "topics/#{@topic._id}", data: comment.as_json(as_json_options.merge(root: true)))
     Centrifugo.publish(channel: "topics/#{@topic._id}", data: comment.as_json(root: true))
