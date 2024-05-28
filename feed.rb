@@ -26,7 +26,7 @@ end
 
 URI.open('https://status.cloud.google.com/feed.atom') do |f|
   doc = Nokogiri::XML(f).remove_namespaces!
-  doc.xpath('//entry').each do |entry|
+  doc.xpath('//entry').reverse.each do |entry|
     link = entry.at_xpath('link')['href']
     title = entry.at_xpath('title').text
     entry_id = entry.at_xpath('id').text
