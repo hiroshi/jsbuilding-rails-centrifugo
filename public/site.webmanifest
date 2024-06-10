@@ -1,0 +1,8 @@
+{
+    "name": "Topics",
+    "short_name": "Topics",
+    "icons": [],
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff",
+    "display": "standalone"
+}

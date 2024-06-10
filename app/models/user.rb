@@ -35,4 +35,15 @@ class User
     user_id = JWT.decode(token, Rails.application.credentials.secret_key_base).dig(0, 'sub') if token
     User.find(user_id) if user_id
   end
+
+  class WebpushSubscription
+    include Mongoid::Document
+
+    field :endpoint, type: String
+    validates :endpoint, uniqueness: true
+
+    embedded_in :user
+  end
+  embeds_many :webpush_subscriptions
+
 end

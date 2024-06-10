@@ -6,8 +6,11 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <meta name="centrifugo-host" content="<%= ENV['CENTRIFUGO_HOST'] %>">
+    <meta name="webpush-pubkey" content="<%= Webpush.public_key %>">
 
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+
+    <link rel="manifest" href="/site.webmanifest">
   </head>
 
   <body>

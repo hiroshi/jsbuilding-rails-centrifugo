@@ -21,6 +21,9 @@ Rails.application.routes.draw do
           resources :users, only: [:create]
         end
       end
+
+      resources :webpush_subscriptions, only: [:create]
+
       scope 'centrifugo' do
         #   resource :token, only: [:show]
         get 'token' => 'centrifugo#token'
