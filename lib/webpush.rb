@@ -4,16 +4,19 @@ module Webpush
     Base64.strict_encode64(OpenSSL::PKey::EC.generate('prime256v1').to_der)
   end
 
-  def self.public_key
+  def self.key
     @ecdsa_key ||= OpenSSL::PKey::EC.new(Base64.strict_decode64(ENV['WEBPUSH_KEY']))
-    @public_key ||= Base64.urlsafe_encode64(@ecdsa_key.public_key.to_bn.to_s(2), padding: false)
+  end
+
+  def self.public_key
+    @public_key ||= Base64.urlsafe_encode64(key.public_key.to_bn.to_s(2), padding: false)
   end
 
   def self.post(endpoint:)
     sub = 'mailto:contact0@yakitara.com'
     aud = endpoint[%r{^\w+://.+/}, 0]
     exp = 24.hour.from_now.to_i
-    jwt = JWT.encode({ sub:, aud:, exp: }, ecdsa_key, 'ES256')
+    jwt = JWT.encode({ sub:, aud:, exp: }, key, 'ES256')
 
     RestClient.post(
       endpoint,
